@@ -76,7 +76,7 @@ int old_main() {
 
     if(!cap.isOpened())  
         cout<<"fail to open!"<<endl; 
-    cap>>image;
+    //cap>>image;
     if(!image.data){
         cout<<"fuck"<<endl;  
         return -1;
@@ -92,20 +92,21 @@ int old_main() {
     double total_time = 0;
     int frame_id = 0;
 
-    SORT sorter;
+    SORT sorter(15);
 
     while (true) {
         //start = clock();
         cap>>image;
         resize(image, image, sz, 0, 0);
+
         auto start_time = std::chrono::system_clock::now();
         vector<Rect_<float> > boxes = find.findFace(image);
-        auto diff = std::chrono::system_clock::now() - start_time;
-        auto t1 = std::chrono::duration_cast<std::chrono::nanoseconds>(diff);
+        auto diff1 = std::chrono::system_clock::now() - start_time;
+        auto t1 = std::chrono::duration_cast<std::chrono::nanoseconds>(diff1);
 
         vector<TrackingBox> detFrameData;
         for (int i = 0; i < boxes.size(); ++i) {
-            cerr << boxes[i].x << ' ' << boxes[i].y << ' ' << boxes[i].width << ' ' << boxes[i].height << endl;
+            //cerr << boxes[i].x << ' ' << boxes[i].y << ' ' << boxes[i].width << ' ' << boxes[i].height << endl;
             TrackingBox cur_box;
             cur_box.box = boxes[i];
             cur_box.id = i;
@@ -114,8 +115,12 @@ int old_main() {
         }
         ++frame_id;
 
+        auto start_track_time = std::chrono::system_clock::now();
         vector<TrackingBox> tracking_results = sorter.update(detFrameData);
         //vector<TrackingBox> tracking_results = detFrameData;
+        auto diff2 = std::chrono::system_clock::now() - start_track_time;
+        auto t2 = std::chrono::duration_cast<std::chrono::nanoseconds>(diff2);
+        
         for (TrackingBox it : tracking_results) {
             rectangle(image, Point(it.box.y, it.box.x), Point(it.box.height, it.box.width), sorter.randColor[it.id % 20], 2,8,0);
         }
@@ -125,10 +130,11 @@ int old_main() {
         if( waitKey(1)>=0 ) break;
         //start = clock() -start;
          
-        cerr << num_frame << ' ' << t1.count()/1e6 << endl;
+        cerr << num_frame << ' ' << t1.count()/1e6 << ' ' << t2.count()/1e6 << " (ms) " << endl;
         if (num_frame < 100) {
             num_frame += 1;
             total_time += double(t1.count());
+            total_time += double(t2.count());
         } else {
             printf("Time=%.2f, Frame=%d, FPS=%.2f\n", total_time / 1e9, num_frame, num_frame * 1e9 / total_time);
             num_frame = 0;

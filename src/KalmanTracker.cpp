@@ -59,6 +59,8 @@ StateType KalmanTracker::predict()
 // Update the state vector with observed bounding box.
 void KalmanTracker::update(StateType stateMat)
 {
+	this->lastRect = stateMat;
+
 	m_time_since_update = 0;
 	m_history.clear();
 	m_hits += 1;

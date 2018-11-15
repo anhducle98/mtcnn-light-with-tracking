@@ -32,7 +32,7 @@ struct SORT {
 	Scalar_<int> randColor[CNUM];
 
 	int frame_count = 0;
-	int max_age = 1;
+	int max_age = 15;
 	int min_hits = 3;
 	double iouThreshold = 0.3;
 	vector<KalmanTracker> trackers;
@@ -53,7 +53,8 @@ struct SORT {
 	double cycle_time = 0.0;
 	int64 start_time = 0;
 
-	SORT() {
+	SORT(int max_age) {
+		this->max_age = max_age;
 		KalmanTracker::kf_count = 0; // tracking id relies on this, so we have to reset it in each seq.
 		RNG rng(0xFFFFFFFF);
 		for (int i = 0; i < CNUM; i++)
@@ -204,7 +205,7 @@ struct SORT {
 				((*it).m_hit_streak >= min_hits || frame_count <= min_hits))
 			{
 				TrackingBox res;
-				res.box = (*it).get_state();
+				res.box = (*it).lastRect;
 				res.id = (*it).m_id + 1;
 				res.frame = frame_count;
 				frameTrackingResult.push_back(res);

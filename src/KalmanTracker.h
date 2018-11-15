@@ -49,6 +49,7 @@ public:
 	StateType get_state();
 	StateType get_rect_xysr(float cx, float cy, float s, float r);
 
+	StateType lastRect;
 	static int kf_count;
 
 	int m_time_since_update;
