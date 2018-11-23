@@ -429,7 +429,7 @@ void nms(vector<struct Bbox> &boundingBox_, vector<struct orderScore> &bboxScore
     for(int i=0;i<heros.size();i++)
         boundingBox_.at(heros.at(i)).exist = true;
 }
-void refineAndSquareBbox(vector<struct Bbox> &vecBbox, const int &height, const int &width){
+void refineAndSquareBbox(vector<struct Bbox> &vecBbox, const int &height, const int &width, bool make_square){
     if(vecBbox.empty()){
         cout<<"Bbox is empty!!"<<endl;
         return;
@@ -449,14 +449,20 @@ void refineAndSquareBbox(vector<struct Bbox> &vecBbox, const int &height, const 
             h = x2 - x1 + 1;
             w = y2 - y1 + 1;
           
-            maxSide = (h>w)?h:w;
-            x1 = x1 + h*0.5 - maxSide*0.5;
-            y1 = y1 + w*0.5 - maxSide*0.5;
-            (*it).x2 = round(x1 + maxSide - 1);
-            (*it).y2 = round(y1 + maxSide - 1);
-            (*it).x1 = round(x1);
-            (*it).y1 = round(y1);
-
+            if (make_square) {
+                maxSide = (h>w)?h:w;
+                x1 = x1 + h*0.5 - maxSide*0.5;
+                y1 = y1 + w*0.5 - maxSide*0.5;
+                (*it).x2 = round(x1 + maxSide - 1);
+                (*it).y2 = round(y1 + maxSide - 1);
+                (*it).x1 = round(x1);
+                (*it).y1 = round(y1);
+            } else {
+                it->x1 = x1;
+                it->x2 = x2;
+                it->y1 = y1;
+                it->y2 = y2;
+            }
             //boundary check
             if((*it).x1<0)(*it).x1=0;
             if((*it).y1<0)(*it).y1=0;

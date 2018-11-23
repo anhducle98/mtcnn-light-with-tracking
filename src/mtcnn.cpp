@@ -593,7 +593,7 @@ vector<Rect_<float> > mtcnn::findFace(const Mat &image){
     }
 
     if(count<1)return vector<Rect_<float> >();
-    refineAndSquareBbox(thirdBbox_, image.rows, image.cols);
+    refineAndSquareBbox(thirdBbox_, image.rows, image.cols, false);
     nms(thirdBbox_, thirdBboxScore_, nms_threshold[2], "Min");
     vector< Rect_<float> > res;
     for(vector<struct Bbox>::iterator it=thirdBbox_.begin(); it!=thirdBbox_.end();it++){
