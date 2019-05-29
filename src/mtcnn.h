@@ -140,7 +140,7 @@ class mtcnn
 public:
     mtcnn(int row, int col);
     ~mtcnn();
-    vector<Rect_<float> > findFace(const Mat &image);
+    vector< BoundingBox > findFace(const Mat &image);
 private:
     Mat reImage;
     float nms_threshold[3];

@@ -1,4 +1,4 @@
-cd build
-make
-cd ..
-./build/main
+cd build &&
+make &&
+cd .. &&
+./build/main $@

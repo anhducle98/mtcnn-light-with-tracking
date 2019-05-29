@@ -508,7 +508,7 @@ mtcnn::~mtcnn(){
     delete []simpleFace_;
 }
 
-vector<Rect_<float> > mtcnn::findFace(const Mat &image){
+vector< BoundingBox > mtcnn::findFace(const Mat &image){
     struct orderScore order;
     int count = 0;
     for (size_t i = 0; i < scales_.size(); i++) {
@@ -531,7 +531,7 @@ vector<Rect_<float> > mtcnn::findFace(const Mat &image){
         simpleFace_[i].boundingBox_.clear();
     }
     //the first stage's nms
-    if(count<1)return vector<Rect_<float> >();
+    if(count<1)return vector< BoundingBox >();
     nms(firstBbox_, firstOrderScore_, nms_threshold[0]);
     refineAndSquareBbox(firstBbox_, image.rows, image.cols);
 
@@ -557,7 +557,7 @@ vector<Rect_<float> > mtcnn::findFace(const Mat &image){
             }
         }
     }
-    if(count<1)return vector<Rect_<float> >();
+    if(count<1)return vector< BoundingBox >();
     nms(secondBbox_, secondBboxScore_, nms_threshold[1]);
     refineAndSquareBbox(secondBbox_, image.rows, image.cols);
 
@@ -592,13 +592,13 @@ vector<Rect_<float> > mtcnn::findFace(const Mat &image){
         }
     }
 
-    if(count<1)return vector<Rect_<float> >();
+    if(count<1)return vector< BoundingBox >();
     refineAndSquareBbox(thirdBbox_, image.rows, image.cols, false);
     nms(thirdBbox_, thirdBboxScore_, nms_threshold[2], "Min");
-    vector< Rect_<float> > res;
+    vector< BoundingBox > res;
     for(vector<struct Bbox>::iterator it=thirdBbox_.begin(); it!=thirdBbox_.end();it++){
         if((*it).exist){
-            res.push_back(Rect_<float>(it->x1, it->y1, it->x2, it->y2));
+            res.push_back(BoundingBox(*it));
             //rectangle(image, Point((*it).y1, (*it).x1), Point((*it).y2, (*it).x2), Scalar(0,0,255), 2,8,0);
             //for(int num=0;num<5;num++)circle(image,Point((int)*(it->ppoint+num), (int)*(it->ppoint+num+5)),3,Scalar(0,255,255), -1);
         }
