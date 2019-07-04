@@ -3,6 +3,7 @@ project(main)
 
 set(QMAKE_CXXFLAGS "-std=c++11")
 include_directories(/usr/local/include)
+include_directories(include)
 link_directories(/usr/local/lib)
 
 find_package( OpenCV REQUIRED)
@@ -13,3 +14,5 @@ target_link_libraries( main ${OpenCV_LIBS} )
 target_link_libraries( main openblas)
 target_link_libraries( main pthread )
 target_link_libraries( main stdc++fs )
+target_link_libraries( main curl )
+
