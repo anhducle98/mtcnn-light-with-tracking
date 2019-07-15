@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(main)
 
-set(QMAKE_CXXFLAGS "-std=c++11")
+set(CMAKE_CXX_STANDARD 11)
 include_directories(/usr/local/include)
 include_directories(include)
 link_directories(/usr/local/lib)

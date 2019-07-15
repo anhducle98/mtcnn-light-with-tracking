@@ -191,7 +191,7 @@ namespace Runner {
     }
 
     config getConfigFile() {
-        std::ifstream i("/home/lad/workspace/lab/MTCNN-light-track/config.json");
+        std::ifstream i("config.json");
         json j;
         i >> j;
         cerr << "json " << j.dump(4) << endl;
@@ -238,16 +238,16 @@ int _main(int argc, char **argv) {
     cerr << "Original size = " << image.rows << "x" << image.cols << endl;
 
     
-    Size sz = Size(image.cols, image.rows);
+    //Size sz = Size(image.cols, image.rows);
     // Uncomment to resize frame before processing
     //Size sz = Size(1280, 720);
-    //Size sz = Size(640, 480);
+    Size sz = Size(640, 480);
     
     resize(image, image, sz, 0, 0);
 
     // Uncomment to crop ROI before processing. Be careful if resize is also enabled!
-    Rect ROI = Rect(image.cols / 6, image.rows / 3, image.cols / 2, image.rows / 3 * 2);
-    //Rect ROI = Rect(0, 0, image.cols, image.rows); // full image
+    //Rect ROI = Rect(image.cols / 6, image.rows / 3, image.cols / 2, image.rows / 3 * 2);
+    Rect ROI = Rect(0, 0, image.cols, image.rows); // full image
 
     
     video_writer.open("output_camera.avi", VideoWriter::fourcc('X', 'V', 'I', 'D'),
@@ -274,10 +274,16 @@ int _main(int argc, char **argv) {
     compression_params.push_back(IMWRITE_PNG_COMPRESSION);
     compression_params.push_back(5);
 
-    while (cap.read(image)) {
+    while (1) {
         try {
-            if (image.empty()) break;
-
+            cerr << "start read" << endl;
+            bool readok = cap.read(image);
+            cerr << "end read" << endl;
+            if (image.empty()) {
+		static int empty_count = 0;
+		cerr <<"Empty frame #" << ++empty_count << endl;
+		continue;
+	    }
             resize(image, image, sz);
 
             image = image(ROI);
@@ -326,7 +332,8 @@ int _main(int argc, char **argv) {
             // Uncomment to write video output
             // video_writer << image;
 
-            if (waitKey(1) >= 0) break;
+            //if (waitKey(1) >= 0) break;
+		waitKey(1);
              
             // Statistics
             cerr << num_frame << ' ' << t1.count()/1e6 << ' ' << t2.count()/1e6 << " (ms) " << endl;
